@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -83,7 +84,7 @@ public:
         for (int i = 0; i < size1; i++) {
             x1[i * 2 + 1] = 0;
             for (int k = 0; k < size2; k++) {
-                x1[i * 2 + 1] += x2[k * 2 + 1] * w[k + i * size2];
+                x1[i * 2 + 1] += x2[k * 2 + 1] * w[k + i * size2] * x1[i * 2] * (1 - x1[i * 2]);
             }
         }
     }
@@ -101,7 +102,8 @@ public:
     void fix(float* x1, float* x2, float* w, int size1, int size2) { // Корректировка весов в зависимости от ошибки
         for (int i = 0; i < size1; i++) {
             for (int k = 0; k < size2; k++) {
-                w[k + i * size2] += 0.1 * x2[k * 2 + 1] * x1[i * 2] * x2[k * 2] * (1 - x2[k * 2]); // Корректировка весов для логистической функции активации
+                //w[k + i * size2] += 0.1 * x2[k * 2 + 1] * x1[i * 2] * x2[k * 2] * (1 - x2[k * 2]); // Корректировка весов для логистической функции активации
+                w[k + i * size2] += 0.1 * x2[k * 2 + 1] * x1[i * 2];
             }
         }
     }
@@ -212,6 +214,8 @@ int learning(Neuron_Web& web) { // Обучение нейросети
 
         if (j % 100000 == 0) cout << error << endl; // Выводим в консоль сумму квадратов ошибок каждой 100.000-ой эпохи
     }
+    
+    cout << "Кол-во эпох: " << j << endl;
 
     return 1;
 }
@@ -219,6 +223,7 @@ int learning(Neuron_Web& web) { // Обучение нейросети
 int main()
 {
     setlocale(LC_ALL, "RU");
+    srand(time(0));
 
     Neuron_Web web; // Создаём нейросеть
 
